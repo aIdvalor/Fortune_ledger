@@ -8,13 +8,13 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   const id = alarm.name.slice(VAULT_PREFIX.length);
   const entry = (await getEntries()).find((e) => e.id === id);
   if (!entry || entry.resolution !== "open") return;
-  const what = entry.itemName?.trim() || "the thing you were considering";
+  const what = entry.itemName?.trim() || "that thing";
   chrome.notifications.create(alarm.name, {
     type: "basic",
     iconUrl: chrome.runtime.getURL("icons/icon128.png"),
-    title: "The Ledger kept your thought",
-    message: `A day has passed since ${what}. Do you still want it? Either answer is fine.`,
-    buttons: [{ title: "I still want it" }, { title: "Let it go" }],
+    title: "🔒 Vault check-in",
+    message: `Still want ${what}?`,
+    buttons: [{ title: "🛍️ Yes" }, { title: "🕊️ Let it go" }],
     requireInteraction: true,
   });
 });

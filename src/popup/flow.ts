@@ -43,23 +43,23 @@ export const CATEGORY_CHIPS: CategoryOption[] = [
   { id: "home", emoji: "🪴", label: "Home" },
   { id: "hobby", emoji: "🏃", label: "Hobby" },
   { id: "treat", emoji: "🍰", label: "Treat" },
-  { id: "useful", emoji: "📦", label: "Useful thing" },
+  { id: "useful", emoji: "📦", label: "Useful" },
 ];
 
 export const FEELING_OPTION: CategoryOption = {
   id: "feeling",
   emoji: "✨",
-  label: "Just a feeling",
+  label: "Just a vibe",
 };
 
 export const NAME_IT_OPTION: CategoryOption = {
   id: "named",
   emoji: "✍️",
-  label: "Name it instead",
+  label: "Name it",
 };
 
 export const PRICE_BANDS: { id: PriceBandId; label: string }[] = [
-  { id: "none", label: "No price" },
+  { id: "none", label: "🤷 Not sure" },
   { id: "under25", label: "Under $25" },
   { id: "mid", label: "$25–$100" },
   { id: "over100", label: "$100+" },
@@ -73,40 +73,40 @@ export const MOTIVES: {
   {
     id: "need",
     title: "Need",
-    description: "It solves a real problem",
+    description: "🔧 Fixes a real problem",
   },
   {
     id: "convenience",
     title: "Convenience",
-    description: "It buys time or removes friction",
+    description: "⏱️ Saves time",
   },
   {
     id: "treat",
     title: "Treat",
-    description: "It brings joy, comfort, or celebration",
+    description: "🎉 Pure joy",
   },
   {
     id: "identity",
     title: "Identity",
-    description: "It supports the person or aesthetic you are becoming",
+    description: "🪞 Who I'm becoming",
   },
   {
     id: "future",
     title: "Future me",
-    description: "It helps a later version of you",
+    description: "🌱 Later-me will thank me",
   },
 ];
 
 export const OUTCOMES: { id: OutcomeId; label: string }[] = [
-  { id: "buy", label: "Buy with intention" },
-  { id: "vault", label: "Put in 24-hour vault" },
-  { id: "save", label: "Save for later" },
+  { id: "buy", label: "🛍️ Buy it, mindfully" },
+  { id: "vault", label: "🔒 Sleep on it (24h)" },
+  { id: "save", label: "🔖 Save for later" },
 ];
 
 export const CONFIRMATION: Record<OutcomeId, string> = {
-  buy: "Recorded without judgment. May it serve you well.",
-  vault: "The Ledger will hold the thought until tomorrow, and remind you then.",
-  save: "Saved privately on this device. No urgency has been created.",
+  buy: "Enjoy it. 🛍️",
+  vault: "Locked in the vault. See you tomorrow. 🔒",
+  save: "Saved. No rush. 🔖",
 };
 
 export const MOTIVE_LABEL: Record<MotiveId, string> = {

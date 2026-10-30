@@ -18,8 +18,8 @@ export function Pause({ seconds, fortune, onDone }: { seconds: number; fortune: 
   const progress = 1 - left / seconds;
   return (
     <section className={styles.screen} aria-labelledby="pause-title">
-      <p className={styles.kicker}>A short breath</p>
-      <h1 id="pause-title" className={styles.prompt}>Sit with it for a moment.</h1>
+      <p className={styles.kicker}><span aria-hidden="true">🌬️</span> Breathe</p>
+      <h1 id="pause-title" className={styles.prompt}>Just a moment.</h1>
       <div className={styles.ringWrap} role="timer" aria-live="off" aria-label={`${left} seconds left`}>
         <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
           <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(43,36,28,0.12)" strokeWidth="6" />
@@ -33,7 +33,7 @@ export function Pause({ seconds, fortune, onDone }: { seconds: number; fortune: 
       </div>
       <p className={styles.hint} style={{ textAlign: "center", fontStyle: "italic" }}>{fortune}</p>
       <button type="button" className={styles.textButton} onClick={onDone}>
-        Skip the pause
+        Skip →
       </button>
     </section>
   );

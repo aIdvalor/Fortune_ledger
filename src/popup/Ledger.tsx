@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styles from "./App.module.css";
 import type { MotiveId } from "./flow";
-import { isNotSpent, type LedgerEntry, type Resolution, type Summary } from "../shared/storage";
+import { type LedgerEntry, type Resolution, type Summary } from "../shared/storage";
 
-const OUTCOME_LABEL = { buy: "Bought with intention", vault: "Vaulted 24h", save: "Saved for later" };
+const OUTCOME_LABEL = { buy: "🛍️ Bought", vault: "🔒 Vaulted", save: "🔖 Saved" };
 
 function money(n: number) {
   return `$${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
@@ -24,14 +24,14 @@ export function Ledger({
   const maxCount = Math.max(1, ...motives.map((m) => summary.byMotive[m].count));
   return (
     <section className={styles.screen} aria-labelledby="ledger-title">
-      <p className={styles.kicker}>Your ledger</p>
+      <p className={styles.kicker}><span aria-hidden="true">📒</span> Your ledger</p>
       <div className={styles.tallyStatic}>
         <span className={styles.tallyAmount}>{money(summary.notSpent)}</span>
         <span className={styles.cardCopy}>
-          not spent{summary.anyEstimate ? " (some amounts estimated from price ranges)" : ""}
+          💰 kept{summary.anyEstimate ? " · ~estimated" : ""}
         </span>
         <span className={styles.cardCopy}>
-          {money(summary.onHold)} still on hold · {summary.intentional} bought with intention · {summary.consults} consults
+          🔒 {money(summary.onHold)} on hold · 🛍️ {summary.intentional} bought · 🔮 {summary.consults} asks
         </span>
       </div>
 
@@ -46,7 +46,7 @@ export function Ledger({
                 <span className={styles.barFill} style={{ width: `${(b.count / maxCount) * 100}%` }} />
               </span>
               <span className={styles.barValue}>
-                {b.count} · {money(b.notSpent)} kept
+                {b.count} · {money(b.notSpent)}
               </span>
             </div>
           );
@@ -55,7 +55,7 @@ export function Ledger({
 
       <h2 className={styles.subhead}>Recent</h2>
       {entries.length === 0 ? (
-        <p className={styles.hint}>Nothing yet. The Ledger is patient.</p>
+        <p className={styles.hint}>Nothing yet 🌱</p>
       ) : (
         <ul className={styles.history}>
           {entries.slice(0, 12).map((e) => (
@@ -66,15 +66,15 @@ export function Ledger({
               </div>
               <div className={styles.cardCopy}>
                 {OUTCOME_LABEL[e.outcome]}
-                {e.resolution === "released" ? " · let go" : ""}
+                {e.resolution === "released" ? " · 🕊️ let go" : ""}
                 {e.outcome !== "buy" && e.resolution === "bought" ? " · bought later" : ""}
-                {isNotSpent(e) && e.resolution === "open" ? " · counted as not spent" : ""}
+                
                 {e.site ? ` · ${e.site}` : ""} · {new Date(e.createdAt).toLocaleDateString()}
               </div>
               {e.outcome !== "buy" && e.resolution === "open" ? (
                 <div className={styles.inlineActions}>
-                  <button type="button" className={styles.textButton} onClick={() => onResolve(e.id, "released")}>Let it go</button>
-                  <button type="button" className={styles.textButton} onClick={() => onResolve(e.id, "bought")}>I bought it</button>
+                  <button type="button" className={styles.textButton} onClick={() => onResolve(e.id, "released")}>🕊️ Let go</button>
+                  <button type="button" className={styles.textButton} onClick={() => onResolve(e.id, "bought")}>🛍️ Bought</button>
                 </div>
               ) : null}
             </li>
@@ -83,16 +83,16 @@ export function Ledger({
       )}
 
       <div className={styles.navRow}>
-        <button type="button" className={styles.secondaryAction} onClick={onExport}>Export JSON</button>
+        <button type="button" className={styles.secondaryAction} onClick={onExport}><span aria-hidden="true">⬇️</span> Export</button>
         {confirming ? (
           <button type="button" className={styles.danger} onClick={() => { setConfirming(false); onDeleteAll(); }}>
-            Yes, delete everything
+            Yes, delete all
           </button>
         ) : (
-          <button type="button" className={styles.secondaryAction} onClick={() => setConfirming(true)}>Delete all</button>
+          <button type="button" className={styles.secondaryAction} onClick={() => setConfirming(true)}><span aria-hidden="true">🗑️</span> Delete all</button>
         )}
       </div>
-      <p className={styles.privacy}>Stored only in this browser. Delete all also clears reminders.</p>
+      <p className={styles.privacy}><span aria-hidden="true">🔐</span> Only in this browser</p>
     </section>
   );
 }

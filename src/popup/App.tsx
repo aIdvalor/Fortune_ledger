@@ -226,19 +226,19 @@ export default function App() {
     <main className={styles.popup}>
       {backStep ? (
         <button type="button" className={styles.back} onClick={goBack}>
-          Back
+          <span aria-hidden="true">←</span> Back
         </button>
       ) : null}
 
       {flow.step === "welcome" ? (
         <section className={styles.screen} aria-labelledby="welcome-title">
-          <p className={styles.kicker}>Warm Oracle</p>
+          <div className={styles.orb} aria-hidden="true">🔮</div>
           <h1 id="welcome-title" className={styles.title}>
             Fortune Ledger
           </h1>
-          <p className={styles.tagline}>A little perspective before checkout.</p>
+          <p className={styles.tagline}>A breath before you buy.</p>
           {site ? (
-            <p className={styles.hint}>You were invited in from {site}.</p>
+            <p className={styles.hint}>📍 {site}</p>
           ) : null}
           <button
             type="button"
@@ -247,7 +247,7 @@ export default function App() {
               setFlow((current) => ({ ...current, step: "context" }))
             }
           >
-            Consult the Ledger
+            ✨ Ask the Ledger
           </button>
           {summary.consults > 0 ? (
             <button
@@ -256,7 +256,7 @@ export default function App() {
               onClick={() => setFlow((current) => ({ ...current, step: "ledger" }))}
             >
               <span className={styles.tallyAmount}>${summary.notSpent.toFixed(0)}</span>
-              <span className={styles.cardCopy}>not spent so far · open your ledger</span>
+              <span className={styles.cardCopy}>💰 kept in your pocket</span>
             </button>
           ) : null}
           <div className={styles.navRow}>
@@ -265,18 +265,18 @@ export default function App() {
               className={styles.textButton}
               onClick={() => setFlow((current) => ({ ...current, step: "ledger" }))}
             >
-              Your ledger
+              <span aria-hidden="true">📒</span> Ledger
             </button>
             <button
               type="button"
               className={styles.textButton}
               onClick={() => setFlow((current) => ({ ...current, step: "settings" }))}
             >
-              Settings
+              <span aria-hidden="true">⚙️</span> Settings
             </button>
           </div>
           <p className={styles.privacy}>
-            Private by design. Stays on this device. No network, no analytics.
+            <span aria-hidden="true">🔐</span> Stays on this device
           </p>
         </section>
       ) : null}
@@ -284,7 +284,7 @@ export default function App() {
       {flow.step === "context" ? (
         <section className={styles.screen} aria-labelledby="context-title">
           <h1 id="context-title" className={styles.prompt}>
-            What kind of thing is calling to you?
+            What's calling you?
           </h1>
           <div className={styles.chipGrid} role="group" aria-label="Item kinds">
             {CATEGORY_CHIPS.map((chip) => (
@@ -331,7 +331,7 @@ export default function App() {
           {flow.showNameField ? (
             <div className={styles.reveal}>
               <label className={styles.fieldLabel} htmlFor={nameFieldId}>
-                What are you considering?
+                What is it?
               </label>
               <input
                 id={nameFieldId}
@@ -361,9 +361,8 @@ export default function App() {
       {flow.step === "price" ? (
         <section className={styles.screen} aria-labelledby="price-title">
           <h1 id="price-title" className={styles.prompt}>
-            Any sense of the price?
+            Roughly how much?
           </h1>
-          <p className={styles.hint}>No exact number is required.</p>
           <div className={styles.chipGrid} role="group" aria-label="Price ranges">
             {PRICE_BANDS.map((band) => (
               <button
@@ -414,7 +413,7 @@ export default function App() {
                 setFlow((current) => ({ ...current, showExactPrice: true }))
               }
             >
-              Enter exact price
+              Exact price
             </button>
           )}
         </section>
@@ -423,7 +422,7 @@ export default function App() {
       {flow.step === "motive" ? (
         <section className={styles.screen} aria-labelledby="motive-title">
           <h1 id="motive-title" className={styles.prompt}>
-            What is this really for?
+            Why do you want it?
           </h1>
           <div className={styles.cardStack} role="group" aria-label="Motives">
             {MOTIVES.map((motive) => (
@@ -444,7 +443,7 @@ export default function App() {
 
       {flow.step === "fortune" ? (
         <section className={styles.screen} aria-labelledby="fortune-title">
-          <p className={styles.kicker}>The Ledger offers</p>
+          <p className={styles.kicker}><span aria-hidden="true">🔮</span> Your fortune</p>
           <h1 id="fortune-title" className={styles.fortune} aria-live="polite">
             {flow.fortune}
           </h1>
@@ -453,7 +452,7 @@ export default function App() {
             className={styles.primary}
             onClick={afterFortune}
           >
-            Choose what happens next
+            Next →
           </button>
         </section>
       ) : null}
@@ -461,7 +460,7 @@ export default function App() {
       {flow.step === "decision" ? (
         <section className={styles.screen} aria-labelledby="decision-title">
           <h1 id="decision-title" className={styles.prompt}>
-            What would you like to do?
+            Your call
           </h1>
           <div className={styles.cardStack} role="group" aria-label="Outcomes">
             {OUTCOMES.map((outcome) => (
@@ -481,7 +480,12 @@ export default function App() {
 
       {flow.step === "confirm" && flow.outcome ? (
         <section className={styles.screen} aria-labelledby="confirm-title">
-          <p className={styles.kicker}>Noted</p>
+          <div className={flow.outcome === "buy" ? styles.orb : `${styles.orb} ${styles.celebrate}`} aria-hidden="true">
+            {flow.outcome === "buy" ? "🛍️" : "🎉"}
+          </div>
+          {flow.outcome !== "buy" ? (
+            <p className={styles.kicker}>Nice. That's money still yours.</p>
+          ) : null}
           <h1 id="confirm-title" className={styles.fortune} aria-live="polite">
             {CONFIRMATION[flow.outcome]}
           </h1>
@@ -490,7 +494,7 @@ export default function App() {
             className={styles.secondaryAction}
             onClick={() => setFlow(INITIAL_STATE)}
           >
-            Consult again
+            ↺ Again
           </button>
         </section>
       ) : null}

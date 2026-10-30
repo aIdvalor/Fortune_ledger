@@ -46,13 +46,13 @@ function renderPill() {
     </style>
     <div class="pill" role="region" aria-label="Fortune Ledger">
       <span aria-hidden="true">🔮</span>
-      <button class="go" type="button">Consult the Ledger?</button>
-      <button class="menu" type="button" aria-label="Snooze options">Snooze…</button>
+      <button class="go" type="button">Pause first?</button>
+      <button class="menu" type="button" aria-label="Mute options">😴</button>
       <span class="snooze">
-        <button class="menu" data-s="day" type="button">This site, 24h</button>
+        <button class="menu" data-s="day" type="button">Mute 24h</button>
         <button class="menu" data-s="always" type="button">Never here</button>
       </span>
-      <button class="x" type="button" aria-label="Dismiss">×</button>
+      <button class="x" type="button" aria-label="Dismiss">✕</button>
     </div>`;
   const pill = root.querySelector(".pill") as HTMLElement;
   root.querySelector(".go")!.addEventListener("click", () => {

@@ -45,31 +45,31 @@ await p.evaluate(async () => {
 await p.reload();
 const shot = async (n) => { await p.waitForTimeout(250); await p.screenshot({ path: `${OUT}/${n}.png` }); };
 await shot("02-welcome");
-await p.getByText("Consult the Ledger").click();
+await p.getByText("Ask the Ledger").click();
 await p.getByText("Tech").click();
 await shot("03-price");
 await p.getByText("$100+").click();
 await p.getByText("Identity").click();
 await shot("04-fortune-identity-tech-100");
 // show a second fortune for a different path
-await p.getByText("Back").click();
-await p.getByText("Back").click();
+await p.getByText("Back", { exact: false }).click();
+await p.getByText("Back", { exact: false }).click();
 await p.getByText("Under $25").click();
 await p.getByText("Treat", { exact: true }).click();
 await shot("05-fortune-treat-under25");
 // enable cool-off via storage then go through pause
 await p.evaluate(() => chrome.storage.local.set({ settings: { coolOffEnabled: true, coolOffSeconds: 20, pillEnabled: true } }));
 await p.reload();
-await p.getByText("Consult the Ledger").click();
+await p.getByText("Ask the Ledger").click();
 await p.getByText("Style").click();
 await p.getByText("$25–$100").click();
 await p.getByText("Treat", { exact: true }).click();
-await p.getByText("Choose what happens next").click();
+await p.getByText("Next →").click();
 await p.waitForTimeout(3200);
 await shot("06-cool-off-pause");
-await p.getByText("Skip the pause").click();
+await p.getByText("Skip →").click();
 await shot("07-outcomes");
-await p.getByText("Put in 24-hour vault").click();
+await p.getByText("Sleep on it (24h)").click();
 await shot("08-vaulted");
 const alarms = await p.evaluate(() => chrome.alarms.getAll());
 console.log("alarms", JSON.stringify(alarms.map(a => ({ name: a.name, hoursFromNow: ((a.scheduledTime - Date.now())/36e5).toFixed(2) }))));
