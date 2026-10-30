@@ -17,7 +17,7 @@ Fortune Ledger is a deliberately **counter-metric product**: a small, warm piece
 
 ## How it works
 1. **Detect.** A content script recognises checkout and cart pages (Amazon, Shopify stores, and generic `/checkout`, `/cart`, `/basket` URLs) using the URL and a few well-known selectors only.
-2. **Invite, never block.** A small "Ask the Ledger?" pill appears in the corner. Dismiss it, or snooze it per site for 24 hours or for good.
+2. **Invite, never block.** A small "🔮 Pause first?" pill appears in the corner. Dismiss it, or snooze it per site for 24 hours or for good.
 3. **Reflect in five taps.** Category → price range (exact price optional) → motive (Need, Convenience, Treat, Identity, Future me).
 4. **Fortune.** One of 40 handwritten lines, chosen deterministically by motive × price × category (no AI API). The most specific match wins; repeat consults rotate.
 5. **Optional cool-off.** A 10–60 s breath with a progress ring (off by default; always skippable).
@@ -27,7 +27,7 @@ Fortune Ledger is a deliberately **counter-metric product**: a small, warm piece
 ```mermaid
 flowchart LR
   A[Checkout or cart page] -->|URL + selectors, on device| B(Content script)
-  B -->|pill: Ask the Ledger?| C[Popup]
+  B -->|pill: Pause first?| C[Popup]
   B -.->|dismiss / snooze per site| S[(chrome.storage.local)]
   C --> D[Category → Price → Motive]
   D --> E[Fortune engine<br/>40 lines, motive×price×category]
