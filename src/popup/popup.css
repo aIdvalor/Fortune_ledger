@@ -5,17 +5,26 @@
 }
 
 html,
-body,
-#root {
+body {
   margin: 0;
   padding: 0;
-  width: 380px;
-  min-height: 500px;
+  min-height: 100%;
 }
 
-body {
-  background: #f7f0e2;
+/* The parchment gradient lives on the page itself, so it fills the whole
+   viewport even when the popup is opened in a tall window or a tab. */
+html {
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(181, 122, 58, 0.08), transparent 55%),
+    linear-gradient(180deg, #f7f0e2 0%, #efe4cf 100%) fixed;
   color: #2b241c;
+}
+
+body,
+#root {
+  width: 380px;
+  min-height: 540px;
+  margin: 0 auto;
 }
 
 button,

@@ -4,8 +4,11 @@ export type Step =
   | "price"
   | "motive"
   | "fortune"
+  | "pause"
   | "decision"
-  | "confirm";
+  | "confirm"
+  | "ledger"
+  | "settings";
 
 export type CategoryId =
   | "style"
@@ -100,11 +103,16 @@ export const OUTCOMES: { id: OutcomeId; label: string }[] = [
   { id: "save", label: "Save for later" },
 ];
 
-export const PLACEHOLDER_FORTUNE =
-  "You are buying a vote for the person you intend to become.";
-
 export const CONFIRMATION: Record<OutcomeId, string> = {
   buy: "Recorded without judgment. May it serve you well.",
-  vault: "The Ledger will hold the thought until tomorrow.",
-  save: "Saved privately. No urgency has been created.",
+  vault: "The Ledger will hold the thought until tomorrow, and remind you then.",
+  save: "Saved privately on this device. No urgency has been created.",
+};
+
+export const MOTIVE_LABEL: Record<MotiveId, string> = {
+  need: "Need",
+  convenience: "Convenience",
+  treat: "Treat",
+  identity: "Identity",
+  future: "Future me",
 };

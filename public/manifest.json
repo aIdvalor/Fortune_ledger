@@ -1,9 +1,30 @@
 {
   "manifest_version": 3,
   "name": "Fortune Ledger",
-  "version": "0.1.0",
-  "description": "A little perspective before checkout.",
-  "permissions": ["storage"],
+  "version": "0.3.0",
+  "description": "Every checkout removes friction. Fortune Ledger adds a little back, kindly.",
+  "permissions": ["storage", "alarms", "notifications"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.amazon.com/gp/buy/*",
+        "https://*.amazon.com/checkout/*",
+        "https://*.amazon.com/gp/cart/*",
+        "https://*.amazon.com/cart*",
+        "https://*.myshopify.com/cart*",
+        "https://*.myshopify.com/checkouts/*",
+        "https://checkout.shopify.com/*",
+        "https://*/*checkout*",
+        "https://*/*cart*",
+        "https://*/*basket*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Fortune Ledger",
@@ -19,5 +40,8 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'none'"
   }
 }

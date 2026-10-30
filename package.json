@@ -1,12 +1,12 @@
 {
   "name": "fortune-ledger",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "A little perspective before checkout.",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/build-workers.mjs",
     "preview": "vite preview",
     "icons": "node scripts/generate-icons.mjs"
   },

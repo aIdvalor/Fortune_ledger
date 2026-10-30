@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import styles from "./App.module.css";
 import {
   CATEGORY_CHIPS,
@@ -7,7 +7,7 @@ import {
   MOTIVES,
   NAME_IT_OPTION,
   OUTCOMES,
-  PLACEHOLDER_FORTUNE,
+  MOTIVE_LABEL,
   PRICE_BANDS,
   type CategoryId,
   type MotiveId,
@@ -15,6 +15,28 @@ import {
   type PriceBandId,
   type Step,
 } from "./flow";
+import { pickFortune } from "../shared/fortunes";
+import {
+  BAND_ESTIMATE,
+  VAULT_MS,
+  addEntry,
+  deleteEverything,
+  exportJson,
+  getEntries,
+  getSettings,
+  getSnoozed,
+  resolveEntry,
+  saveSettings,
+  setSnoozed,
+  summarize,
+  takePendingContext,
+  DEFAULT_SETTINGS,
+  type LedgerEntry,
+  type Settings,
+} from "../shared/storage";
+import { Ledger } from "./Ledger";
+import { SettingsView } from "./SettingsView";
+import { Pause } from "./Pause";
 
 type FlowState = {
   step: Step;
@@ -26,6 +48,7 @@ type FlowState = {
   showExactPrice: boolean;
   motive: MotiveId | null;
   outcome: OutcomeId | null;
+  fortune: string;
 };
 
 const INITIAL_STATE: FlowState = {
@@ -38,6 +61,7 @@ const INITIAL_STATE: FlowState = {
   showExactPrice: false,
   motive: null,
   outcome: null,
+  fortune: "",
 };
 
 function previousStep(step: Step): Step | null {
@@ -50,8 +74,13 @@ function previousStep(step: Step): Step | null {
       return "price";
     case "fortune":
       return "motive";
+    case "pause":
+      return "fortune";
     case "decision":
       return "fortune";
+    case "ledger":
+    case "settings":
+      return "welcome";
     case "confirm":
       return "decision";
     default:
@@ -64,6 +93,34 @@ export default function App() {
   const nameFieldId = useId();
   const exactPriceId = useId();
   const backStep = previousStep(flow.step);
+  const [settings, setSettingsState] = useState<Settings>(DEFAULT_SETTINGS);
+  const [entries, setEntries] = useState<LedgerEntry[]>([]);
+  const [snoozed, setSnoozedState] = useState<Record<string, number>>({});
+  const [site, setSite] = useState<string | undefined>();
+
+  async function refresh() {
+    const [s, e, z] = await Promise.all([getSettings(), getEntries(), getSnoozed()]);
+    setSettingsState(s);
+    setEntries(e);
+    setSnoozedState(z);
+  }
+
+  useEffect(() => {
+    refresh();
+    takePendingContext().then(setSite);
+    const applyHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash === "ledger" || hash === "settings") {
+        refresh();
+        setFlow((current) => ({ ...current, step: hash }));
+      }
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
+  }, []);
+
+  const summary = summarize(entries);
 
   function goBack() {
     if (!backStep) {
@@ -112,15 +169,56 @@ export default function App() {
     setFlow((current) => ({
       ...current,
       motive: id,
+      fortune: pickFortune(
+        id,
+        current.priceBand ?? "none",
+        current.category ?? "feeling",
+        entries.length,
+      ),
       step: "fortune",
     }));
   }
 
-  function selectOutcome(id: OutcomeId) {
+  function continueFromExactPrice() {
+    const value = Number(flow.exactPrice);
+    const band: PriceBandId =
+      !value || value <= 0 ? "none" : value < 25 ? "under25" : value <= 100 ? "mid" : "over100";
+    selectPriceBand(band);
+  }
+
+  async function selectOutcome(id: OutcomeId) {
+    const exact = Number(flow.exactPrice);
+    const band = flow.priceBand ?? "none";
+    const entry: LedgerEntry = {
+      id: crypto.randomUUID(),
+      createdAt: Date.now(),
+      category: flow.category ?? "feeling",
+      itemName: flow.itemName.trim() || undefined,
+      priceBand: band,
+      amount: exact > 0 ? exact : BAND_ESTIMATE[band],
+      amountIsEstimate: !(exact > 0),
+      motive: flow.motive ?? "need",
+      outcome: id,
+      resolution: id === "buy" ? "bought" : "open",
+      site,
+      fortune: flow.fortune,
+    };
+    await addEntry(entry);
+    if (id === "vault" && typeof chrome !== "undefined" && chrome.alarms) {
+      chrome.alarms.create(`vault:${entry.id}`, { when: Date.now() + VAULT_MS });
+    }
+    await refresh();
     setFlow((current) => ({
       ...current,
       outcome: id,
       step: "confirm",
+    }));
+  }
+
+  function afterFortune() {
+    setFlow((current) => ({
+      ...current,
+      step: settings.coolOffEnabled ? "pause" : "decision",
     }));
   }
 
@@ -139,6 +237,9 @@ export default function App() {
             Fortune Ledger
           </h1>
           <p className={styles.tagline}>A little perspective before checkout.</p>
+          {site ? (
+            <p className={styles.hint}>You were invited in from {site}.</p>
+          ) : null}
           <button
             type="button"
             className={styles.primary}
@@ -148,8 +249,34 @@ export default function App() {
           >
             Consult the Ledger
           </button>
+          {summary.consults > 0 ? (
+            <button
+              type="button"
+              className={styles.tally}
+              onClick={() => setFlow((current) => ({ ...current, step: "ledger" }))}
+            >
+              <span className={styles.tallyAmount}>${summary.notSpent.toFixed(0)}</span>
+              <span className={styles.cardCopy}>not spent so far · open your ledger</span>
+            </button>
+          ) : null}
+          <div className={styles.navRow}>
+            <button
+              type="button"
+              className={styles.textButton}
+              onClick={() => setFlow((current) => ({ ...current, step: "ledger" }))}
+            >
+              Your ledger
+            </button>
+            <button
+              type="button"
+              className={styles.textButton}
+              onClick={() => setFlow((current) => ({ ...current, step: "settings" }))}
+            >
+              Settings
+            </button>
+          </div>
           <p className={styles.privacy}>
-            Private by design. Nothing is read from this page.
+            Private by design. Stays on this device. No network, no analytics.
           </p>
         </section>
       ) : null}
@@ -270,6 +397,13 @@ export default function App() {
                   }))
                 }
               />
+              <button
+                type="button"
+                className={styles.primary}
+                onClick={continueFromExactPrice}
+              >
+                Continue
+              </button>
             </div>
           ) : (
             <button
@@ -312,14 +446,12 @@ export default function App() {
         <section className={styles.screen} aria-labelledby="fortune-title">
           <p className={styles.kicker}>The Ledger offers</p>
           <h1 id="fortune-title" className={styles.fortune} aria-live="polite">
-            {PLACEHOLDER_FORTUNE}
+            {flow.fortune}
           </h1>
           <button
             type="button"
             className={styles.primary}
-            onClick={() =>
-              setFlow((current) => ({ ...current, step: "decision" }))
-            }
+            onClick={afterFortune}
           >
             Choose what happens next
           </button>
@@ -361,6 +493,54 @@ export default function App() {
             Consult again
           </button>
         </section>
+      ) : null}
+      {flow.step === "pause" ? (
+        <Pause
+          seconds={settings.coolOffSeconds}
+          fortune={flow.fortune}
+          onDone={() => setFlow((current) => ({ ...current, step: "decision" }))}
+        />
+      ) : null}
+
+      {flow.step === "ledger" ? (
+        <Ledger
+          entries={entries}
+          summary={summary}
+          motiveLabel={MOTIVE_LABEL}
+          onResolve={async (id, r) => {
+            await resolveEntry(id, r);
+            await refresh();
+          }}
+          onExport={async () => {
+            const blob = new Blob([await exportJson()], { type: "application/json" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `fortune-ledger-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+          }}
+          onDeleteAll={async () => {
+            await deleteEverything();
+            await refresh();
+          }}
+        />
+      ) : null}
+
+      {flow.step === "settings" ? (
+        <SettingsView
+          settings={settings}
+          snoozed={snoozed}
+          onChange={async (next) => {
+            await saveSettings(next);
+            setSettingsState(next);
+          }}
+          onUnsnooze={async (host) => {
+            const next = { ...snoozed };
+            delete next[host];
+            await setSnoozed(next);
+            setSnoozedState(next);
+          }}
+        />
       ) : null}
     </main>
   );

@@ -10,12 +10,9 @@
 
   box-sizing: border-box;
   width: 380px;
-  height: 540px;
+  min-height: 540px;
   padding: 1rem 1.15rem 1.15rem;
-  overflow: auto;
-  background:
-    radial-gradient(120% 80% at 50% 0%, rgba(181, 122, 58, 0.08), transparent 55%),
-    linear-gradient(180deg, var(--cream) 0%, var(--parchment) 100%);
+  background: transparent;
   color: var(--ink);
   font-family: "Iowan Old Style", Georgia, "Times New Roman", serif;
 }
@@ -294,7 +291,7 @@
 
 @media (max-height: 480px) {
   .popup {
-    height: min(540px, 100vh);
+    min-height: min(540px, 100vh);
   }
 
   .chip,
@@ -302,3 +299,36 @@
     min-height: 2.8rem;
   }
 }
+
+/* ---- Phase 3 ---- */
+.navRow { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
+.navRow .secondaryAction, .navRow .danger { width: auto; flex: 1; }
+.tally, .tallyStatic {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem;
+  padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 0.9rem;
+  background: rgba(255, 252, 246, 0.78); color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+}
+.tallyStatic { cursor: default; }
+.tallyAmount { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+.subhead { margin: 0.4rem 0 0; font-size: 0.95rem; font-weight: 700; }
+.bars { display: grid; gap: 0.35rem; }
+.barRow { display: grid; grid-template-columns: 5.5rem 1fr 6.5rem; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
+.barLabel { color: var(--ink); }
+.barTrack { height: 0.5rem; border-radius: 999px; background: rgba(43, 36, 28, 0.08); overflow: hidden; }
+.barFill { display: block; height: 100%; border-radius: 999px; background: color-mix(in srgb, var(--accent) 70%, #fff); }
+.barValue { color: var(--muted); text-align: right; font-size: 0.75rem; }
+.history { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+.historyItem { padding: 0.55rem 0.7rem; border: 1px solid var(--line); border-radius: 0.75rem; background: rgba(255, 252, 246, 0.6); }
+.historyTop { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; font-size: 0.88rem; }
+.inlineActions { display: flex; gap: 0.5rem; }
+.inlineActions .textButton { margin: 0; padding: 0.2rem 0; }
+.danger {
+  min-height: 2.75rem; margin-top: 0.35rem; padding: 0.7rem 1rem; border-radius: 999px;
+  border: 1px solid #a5432f; background: #f6e1d9; color: #7a2e1f; font: inherit; font-size: 0.95rem; cursor: pointer;
+}
+.toggle { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.9rem; cursor: pointer; }
+.toggle > span { display: flex; flex-direction: column; gap: 0.1rem; }
+.toggle input { margin-top: 0.25rem; accent-color: var(--accent); }
+.ringWrap { position: relative; align-self: center; width: 120px; height: 120px; }
+.ringLabel { position: absolute; inset: 0; display: grid; place-items: center; font-size: 1.4rem; font-weight: 700; }
+.popup input[type="range"] { accent-color: var(--accent); width: 100%; }
