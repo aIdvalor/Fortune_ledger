@@ -22,9 +22,9 @@ export function Pause({ seconds, fortune, onDone }: { seconds: number; fortune: 
       <h1 id="pause-title" className={styles.prompt}>Just a moment.</h1>
       <div className={styles.ringWrap} role="timer" aria-live="off" aria-label={`${left} seconds left`}>
         <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
-          <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(43,36,28,0.12)" strokeWidth="6" />
+          <circle cx="60" cy="60" r={r} fill="none" stroke="color-mix(in srgb, var(--ink) 12%, transparent)" strokeWidth="6" />
           <circle
-            cx="60" cy="60" r={r} fill="none" stroke="#b57a3a" strokeWidth="6" strokeLinecap="round"
+            cx="60" cy="60" r={r} fill="none" stroke="var(--accent)" strokeWidth="6" strokeLinecap="round"
             strokeDasharray={c} strokeDashoffset={c * (1 - progress)}
             transform="rotate(-90 60 60)" style={{ transition: "stroke-dashoffset 1s linear" }}
           />

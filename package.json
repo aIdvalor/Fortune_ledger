@@ -1,7 +1,7 @@
 {
   "name": "fortune-ledger",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A little perspective before checkout.",
   "type": "module",
   "scripts": {
